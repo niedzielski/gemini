@@ -56,8 +56,8 @@ testing of web pages appearance.</p>
 <ul>
 <li>Google Chrome (tested in latest version)</li>
 <li>Mozilla Firefox (tested in latest version)</li>
-<li><a href="doc/ie-support.md">IE8+</a></li>
-<li>Opera 12+;</li>
+<li>IE8+</li>
+<li>Opera 12+</li>
 </ul>
 </li>
 <li><p>Ability to test separate sections of a web page;</p>
@@ -78,7 +78,7 @@ configuration and usage of <strong>Gemini</strong>.</p>
 <h2 id="dependencies">Dependencies</h2>
 <p>Required software:</p>
 <ol>
-<li><p>WebDriver server implementation. There are few possible options: </p>
+<li><p>WebDriver server implementation. There are few possible options:</p>
 <ul>
 <li><p><a href="http://docs.seleniumhq.org/download/">Selenium Server</a> – for testing in
 different browsers.</p>
@@ -89,8 +89,8 @@ testing in Google Chrome.</p>
 <li><p><a href="http://phantomjs.org/">PhantomJS</a> — launch with <code>phantomjs
 --webdriver=4444</code> command.</p>
 </li>
-<li><p>Cloud WebDriver services, such as such as
-[SauceLabs] (<a href="http://saucelabs.com/">http://saucelabs.com/</a>) or
+<li><p>Cloud WebDriver services, such as
+<a href="http://saucelabs.com/">SauceLabs</a> or
 <a href="http://www.browserstack.com/">BrowserStack</a></p>
 </li>
 </ul>
@@ -111,8 +111,17 @@ following command in project directory:</p>
 <pre><code class="lang-sh">npm install gemini
 </code></pre>
 <h2 id="configuration">Configuration</h2>
-<p><strong>Gemini</strong> is configured using <code>.gemini.yml</code> file at the root of the project.
-Lets say we want to run our tests only in locally installed <code>PhantomJS</code>.</p>
+<p><strong>Gemini</strong> is configured using config file at the root of the project.
+Gemini can use one of the next files:</p>
+<ul>
+<li><code>.gemini.conf.js</code></li>
+<li><code>.gemini.conf.json</code></li>
+<li><code>.gemini.conf.yml</code></li>
+<li><code>.gemini.js</code></li>
+<li><code>.gemini.json</code></li>
+<li><code>.gemini.yml</code></li>
+</ul>
+<p>Lets say we want to run our tests only in locally installed <code>PhantomJS</code>.</p>
 <p>In this case, the minimal configuration file will need to have only the root url
 of your web app and WebDriver capabilities of <code>PhantomJS</code>:
 For example,</p>
@@ -144,8 +153,8 @@ browsers:
 <pre><code class="lang-yaml">rootUrl: http://yandex.com
 
 browsers:
-  gridUrl: http://chrome-node.example.com:4444/wd/hub
   chrome:
+    gridUrl: http://chrome-node.example.com:4444/wd/hub
     desiredCapabilities:
       browserName: chrome
       version: &quot;45.0&quot;
@@ -165,9 +174,7 @@ States are tested with the help of chains of step-by-step actions declared in
 test suites of a block.</p>
 <p>For example, let&#39;s write a test for a search block at
 <a href="http://www.yandex.com">yandex.com</a>:</p>
-<pre><code class="lang-javascript">var gemini = require(&#39;gemini&#39;);
-
-gemini.suite(&#39;yandex-search&#39;, function(suite) {
+<pre><code class="lang-javascript">gemini.suite(&#39;yandex-search&#39;, function(suite) {
     suite.setUrl(&#39;/&#39;)
         .setCaptureElements(&#39;.main-table&#39;)
         .capture(&#39;plain&#39;)
@@ -189,7 +196,7 @@ reload in between.</p>
 <h2 id="using-cli">Using CLI</h2>
 <p>To complete the test creation procedure you need to take reference shots using
 the following command:</p>
-<pre><code>gemini gather [paths to test suites]
+<pre><code>gemini update [paths to test suites]
 </code></pre><p>For test launch (to compare current state of a block with a reference shot) use
 the command:</p>
 <pre><code>gemini test [paths to test suites]

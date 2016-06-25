@@ -48,14 +48,7 @@ if you want to run tests in real browsers.</p>
 used. In this case, run PhantomJS in webdriver mode before executing
 <strong>Gemini</strong>:</p>
 <pre><code>phantomjs --webdriver=4444
-</code></pre><h2 id="gathering-reference-images-deprecated-">Gathering reference images [deprecated]</h2>
-<p><strong>This command is deprecated. Use <code>gemini update</code> command instead.</strong></p>
-<p>Once you have few suites written you need to capture reference images:</p>
-<pre><code>gemini gather [paths to suites]
-</code></pre><p>If no paths are specified, each <code>.js</code> file from <code>gemini</code> directory will be
-processed. By default, configuration will be loaded from <code>.gemini.yml</code> in the
-current directory. To specify other config, use <code>--config</code> or <code>-c</code> option.</p>
-<h2 id="updating-reference-images">Updating reference images</h2>
+</code></pre><h2 id="updating-reference-images">Updating reference images</h2>
 <p>Once you have few suites written or some code changed you need to capture or update reference images:</p>
 <pre><code>gemini update [paths to suites]
 </code></pre><p>By default, this command will do two things:</p>
@@ -74,7 +67,7 @@ current directory. To specify other config, use <code>--config</code> or <code>-
 <h2 id="running-tests">Running tests</h2>
 <p>To compare you reference screenshots with current state of blocks, use:</p>
 <pre><code>gemini test [paths to suites]
-</code></pre><p>Paths and configuration are treated the same way as in <code>gather</code> command.</p>
+</code></pre><p>Paths and configuration are treated the same way as in <code>update</code> command.</p>
 <p>Each state with appearance different from reference image will be treated as
 the failed test.</p>
 <p>By default, only names of the states are listed in shell. To get more

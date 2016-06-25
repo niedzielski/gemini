@@ -49,9 +49,7 @@ state.</p>
 <h2 id="defining-suites">Defining suites</h2>
 <p>Test suite is defined with <code>gemini.suite</code> method.</p>
 <p><strong>Example</strong>:</p>
-<pre><code class="lang-js">var gemini = require(&#39;gemini&#39;);
-
-gemini.suite(&#39;button&#39;, function(suite) {
+<pre><code class="lang-js">gemini.suite(&#39;button&#39;, function(suite) {
     suite
         .setUrl(&#39;/path/to/page&#39;)
         .setCaptureElements(&#39;.button&#39;)
@@ -131,6 +129,16 @@ for details).</p>
 ]);
 </code></pre>
 </li>
+<li><p><code>browsers([browser])</code> – run all tests and nested suites in specified browsers:</p>
+<ul>
+<li><p><code>browsers(&#39;id&#39;)</code> – browser with specified <code>id</code>;</p>
+</li>
+<li><p><code>browsers(/some RegExp/)</code> – browser <code>id</code> which matches <code>/some RegExp/</code>;</p>
+</li>
+<li><p><code>browsers([&#39;id1&#39;, /RegExp1/, ...])</code> – multiple browsers.</p>
+</li>
+</ul>
+</li>
 <li><p><code>capture(stateName, [options], callback(actions, find))</code> – defines a new
 state to capture. Optional callback describes a sequence of actions to bring
 the page to this state, starting from a <strong>previous</strong> state of the suite.
@@ -189,9 +197,7 @@ after the last state. The arguments of a callback are the same as for
 <code>captureElements</code> from outer. This properties can be overridden in inner
 suites without affecting the outer. Each new suite causes reload of the
 browser, even if URL was not changed.</p>
-<pre><code class="lang-js">var gemini = require(&#39;gemini&#39;);
-
-gemini.suite(&#39;parent&#39;, function(parent) {
+<pre><code class="lang-js">gemini.suite(&#39;parent&#39;, function(parent) {
     parent.setUrl(&#39;/some/path&#39;)
         .setCaptureElements(&#39;.selector1&#39;, &#39;.selector2&#39;);
         .capture(&#39;state&#39;);
@@ -204,7 +210,7 @@ gemini.suite(&#39;parent&#39;, function(parent) {
 
     gemini.suite(&#39;second child&#39;, function(child) {
         //this suite captures different elements on the same page
-        child.setCaptureElements(&#39;.next-selector&#39;})
+        child.setCaptureElements(&#39;.next-selector&#39;)
             .capture(&#39;third state&#39;, function(actions, elements) {
                 // ...
             })
@@ -308,6 +314,8 @@ executed on).</p>
 <li><p><code>setWindowSize(width, height)</code> – change browser window dimensions.</p>
 </li>
 <li><p><code>tap(element)</code> - tap specified element on touch enabled device.</p>
+</li>
+<li><p><code>changeOrientation()</code> – change orientation on touch enabled device (from <code>PORTRAIT</code> to <code>LANDSCAPE</code> and vice versa). :warning: Does not work on mobile emulation.</p>
 </li>
 </ul>
 

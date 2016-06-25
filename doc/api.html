@@ -42,14 +42,15 @@
 <li class="nav__item"><a href="plugins.html" class="link">Writing plugins</a></li>
     </ul>
     <h1 id="programmatic-api-experimental-">Programmatic API (experimental)</h1>
-<p>With the help of <code>geminin/api</code> module you can use <strong>Gemini</strong> programmatically
+<p>With the help of <code>gemini/api</code> module you can use <strong>Gemini</strong> programmatically
 in your scripts or build tools plugins.</p>
 <p>First step is to create <strong>Gemini</strong> instance with a config:</p>
 <pre><code class="lang-javascript">var Gemini = require(&#39;gemini/api&#39;);
 
 var gemini = new Gemini({
     projectRoot: &#39;/path/to/project&#39;,
-    gridUrl: &#39;http://example.com/grid&#39;
+    gridUrl: &#39;http://example.com/grid&#39;,
+    rootUrl: &#39;http://test.com&#39;
     ...
 });
 </code></pre>
@@ -68,12 +69,18 @@ file reference). Options <strong>must</strong> have <code>projectRoot</code> set
 console.log(gemini.config.rootUrl);
 </code></pre>
 <h2 id="reading-the-tests">Reading the tests</h2>
+<p><code>gemini.readTests(paths, grep)</code> – read all of the tests from specified paths into
+one suite collection.</p>
 <ul>
-<li><p><code>gemini.readTests(paths)</code> – read all of the tests from specified paths into
-one suite collection. <code>paths</code> is an array of files or directories paths
-containing Gemini tests. If not specified, will look for tests in
-<code>$projectRoot/gemini</code> directory. Returns promise which resolves to a
-<code>SuiteCollection</code> object.</p>
+<li><p><code>paths</code> is an array of files or directories paths containing Gemini tests.
+If not specified, will look for tests in <code>$projectRoot/gemini</code> directory.</p>
+</li>
+<li><p><code>grep</code> is a regular expression to filter suites to read. By default, all tests
+will be read. If this option is set, only suites with name matching the
+pattern will be read.</p>
+</li>
+</ul>
+<p>Returns promise which resolves to a <code>SuiteCollection</code> object.</p>
 <p>Here is the example that prints all top level suite names:</p>
 <pre><code class="lang-javascript">var Gemini = require(&#39;gemini/api&#39;),
     gemini = new Gemini(&#39;/path/to/config&#39;);
@@ -85,8 +92,6 @@ gemini.readTests()
         });
     });
 </code></pre>
-</li>
-</ul>
 <h2 id="suite-collection">Suite Collection</h2>
 <p>You can create SuiteCollection object by using <code>gemini.SuiteCollection</code> constructor.
 Also SuiteCollection object is returned by <code>gemini.readTests</code> method.</p>
@@ -107,13 +112,14 @@ children recursively.</p>
 <li><p><code>enableAll()</code> - enable all suites in collection</p>
 </li>
 <li><p><code>disable(suite, [opts])</code> - disable suite and all its children</p>
+<p><code>suite</code> can be a real suite object, or suite full name</p>
 <p><code>opts</code> are optional:</p>
 <ul>
 <li><code>opts.browser</code> - browser to disable suite in</li>
 <li><code>opts.state</code> - disable only specified state</li>
 </ul>
 </li>
-<li><p><code>enable(suite, [opts])</code> - enable suite and all its children. <code>opts</code> are the same as in
+<li><p><code>enable(suite, [opts])</code> - enable suite and all its children. Arguments are the same as in
 <code>disable</code></p>
 </li>
 </ul>
@@ -151,8 +157,9 @@ when loading suites.</p>
 <li><code>shouldSkip(browserId)</code> – returns <code>true</code> if this state should be skipped for
 a browser.</li>
 </ul>
-<h2 id="gathering-reference-screenshots">Gathering reference screenshots</h2>
-<p>Use <code>gemini.gather(paths, options)</code> method.</p>
+<h2 id="updating-reference-screenshots">Updating reference screenshots</h2>
+<p>Use <code>gemini.update(paths, options)</code> method.
+By default, this command will update reference images that have diff and generate new reference images for new tests.</p>
 <p><code>paths</code> is the array of file paths or directories to run the suites from
 or <code>SuiteCollection</code> instance.</p>
 <p>Options:</p>
@@ -167,6 +174,10 @@ pattern will be executed.</p>
 </li>
 <li><p><code>browsers</code> — array of browser ids to execute tests in. By default, tests are
 executed in all browsers, specified in config.</p>
+</li>
+<li><p><code>diff</code>(Boolean) - update only existing images with some diff, states with no reference images will be ignored.</p>
+</li>
+<li><p><code>new</code>(Boolean) - generate only missing images.</p>
 </li>
 </ul>
 <p>Returns promise that resolve to a stats object with following keys:</p>
@@ -188,9 +199,6 @@ or <code>SuiteCollection</code> instance.</p>
 <li><p><code>reporters</code> – array of reporter to use. Each element can be either string
 (to use corresponding built-in reporter) or reporter function (to use
 a custom reporter).</p>
-</li>
-<li><p><code>tempDir</code> – directory to save temporary images (current states) to. By
-default, new temp directory will be created.</p>
 </li>
 <li><p><code>grep</code> – regular expression to filter suites to run. By default, all tests
 will be executed. If this option is set, only suites with name matching the
@@ -224,11 +232,11 @@ for specified <code>browserId</code>.</p>
 <p><code>gemini</code> instance emits some events, which can be used by external scripts or
 plugins:</p>
 <ul>
-<li><p><code>startRunner</code> - emitted before the start of <code>test</code> or <code>gather</code> command. If
+<li><p><code>startRunner</code> - emitted before the start of <code>test</code> or <code>update</code> command. If
 you return a promise from the event handler, the start of the command will
 be delayed until the promise resolves.</p>
 </li>
-<li><p><code>endRunner</code> - emitted after the end of the <code>test</code> or <code>gather</code> command.</p>
+<li><p><code>endRunner</code> - emitted after the end of the <code>test</code> or <code>update</code> command.</p>
 </li>
 </ul>
 

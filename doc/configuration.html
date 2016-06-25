@@ -52,6 +52,7 @@ desiredCapabilities:
 calibrate: false
 tolerance: 3.5
 httpTimeout: 5000
+sessionRequestTimeout: 60000
 screenshotsDir: &#39;./screens&#39;
 windowSize: 1600x1080
 sessionsPerBrowser: 2
@@ -113,6 +114,12 @@ config file is placed in.</p>
 will be used in the coverage report when the source map is available, but
 the sources can not be downloaded via URLs from the test pages. By default,
 it is equal to <code>projectRoot</code>.</p>
+</li>
+<li><p><code>tempDir</code> – directory to save temporary images (current states) to. This
+directory should exist. Gemini will create own temp directory in it with name
+starting with <code>.gemini.tmp.</code> where all temporary images will be saved.
+After run created directory will be removed. If not set system temp
+directory will be used.</p>
 </li>
 <li><p><code>plugins</code> - list of plugins to enable. Should have form of <code>pluginName:
 settings</code>.  For example:</p>
@@ -196,6 +203,8 @@ disable it by setting this option to <code>false</code>.</p>
 <li><p><code>httpTimeout</code> - timeout for HTTP requests to WebDriver, milliseconds. By
 default the server timeout is used.</p>
 </li>
+<li><p><code>sessionRequestTimeout</code> - timeout for getting of browser sessions, milliseconds. By default the value of option <code>httpTimeout</code> is used.</p>
+</li>
 <li><p><code>screenshotsDir</code> – directory to save reference screenshots to.
 <code>&lt;projectRoot&gt;/gemini/screens</code> by default.</p>
 </li>
@@ -209,7 +218,7 @@ instead.</p>
 <li><p><code>windowSize</code> – specify browser window dimensions (i.e. <code>1600x1200</code>). If not
 specified, the size of the window depends on WebDriver.</p>
 </li>
-<li><p><code>sessionPerBrowser</code> - how many WebDriver sessions  can be launched
+<li><p><code>sessionsPerBrowser</code> - how many WebDriver sessions  can be launched
 simultaneously for this browser. Default is 1. Increase the value if you
 want to speed up your tests.</p>
 </li>
@@ -220,6 +229,26 @@ experiencing stability problems.</p>
 </li>
 <li><p><code>retry</code> – maximum amount of relaunch fallen tests with a critical error. If not
 specified, the fallen tests will not be relaunched (by default it&#39;s 0).</p>
+<p>Note that fallen test will not be retried immediately, it will be delayed until
+all tests finish and then restarted in new browser session. So the tests will be
+performed in waves:</p>
+<ul>
+<li>run all tests</li>
+<li>first retry: run tests failed during all tests run</li>
+<li>second retry: run tests failed during first retry</li>
+<li>...</li>
+</ul>
+</li>
+<li><p><code>screenshotMode</code> - image capture mode. There are 3 allowed values for this option:</p>
+<ul>
+<li><code>auto</code> (default). Mode will be obtained automatically.</li>
+<li><code>fullpage</code>. Gemini will deal with screenshot of full page.</li>
+<li><code>viewport</code>. Only viewport area will be used.</li>
+</ul>
+</li>
+<li><p><code>compositeImage</code> – allows testing of regions which bottom bounds are outside of a viewport height (default: <code>false</code>).
+In the resulting screenshot the area which fits the viewport bounds will be <strong>joined</strong> with the area which is outside
+of the viewport height.</p>
 </li>
 </ul>
 <h2 id="sets">Sets</h2>
@@ -262,12 +291,12 @@ URL, call:</p>
 <pre><code>gemini test --root-url http://example.com
 </code></pre><p>To save screenshots for IE9 to different location (considering you have
 browser with <code>ie9</code> id in the config):</p>
-<pre><code>gemini gather --browsers-ie9-screenshots-dir ./ie9-screens
+<pre><code>gemini update --browsers-ie9-screenshots-dir ./ie9-screens
 </code></pre><p>To override setting with environment variable, convert its full path to
 <code>snake_case</code> and add <code>gemini_</code> prefix. Above examples can be rewritten to use
 environment variables instead of CLI options:</p>
 <pre><code>gemini_root_url=http://example.com gemini test
-gemini_browsers_ie9_screenshots_dir=./ie9-screens gemini gather
+gemini_browsers_ie9_screenshots_dir=./ie9-screens gemini update
 </code></pre>
 </body>
 </html>
